@@ -277,7 +277,7 @@ self: super: builtins.intersectAttrs super {
                             then dontCheck
                             else pkgs.lib.id;
       in dontCheckDarwin (super.llvm-hs.override {
-        llvm-config = pkgs.llvm_6;
+        llvm-config = pkgs.llvm_7;
       });
 
   # Needs help finding LLVM.
