@@ -115,7 +115,9 @@ Still it is useful to know the parameters it takes when you need to
 `haskellPackages.mkDerivation` is a wrapper around `stdenv.mkDerivation`
 which re-defines the default phases to be haskell aware and handles
 dependency specification, test suites, benchmarks etc. by compiling
-and invoking the package's `Setup.hs`.
+and invoking the package's `Setup.hs`. It does *not* use or invoke
+the `cabal-install` binary, but uses the underlying `Cabal` library
+instead.
 
 ### General arguments
 
