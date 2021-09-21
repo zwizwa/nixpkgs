@@ -395,3 +395,77 @@ documentation.
 ### Fixing a broken package {#sec-haskell-fixing-a-broken-package}
 
 ### Package set generation {#sec-haskell-package-set-generation}
+
+### Backporting {#sec-haskell-backporting}
+
+Backporting changes to a stable NixOS version in general is covered
+in nixpkgs' `CONTRIBUTING.md` in general. In particular refer to the
+[backporting policy](https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#criteria-for-backporting-changes)
+to check if the change you have in mind may be backported.
+
+This section focuses on how to backport a package update (e. g. a
+bug fix or security release). Fixing a broken package works like
+it does for the unstable branches.
+
+#### Updating hackage snapshot on the release branch
+
+Most haskell package definitions are generated automatically. To do
+this we use a snapshot of data obtained from Hackage we track in
+nixpkgs as `all-cabal-hashes`. In most cases to be able to update
+a package, you first have to update the Hackage update, so it also
+contains the desired version. Luckily there is are handy scripts
+for this purpose, allowing you to run the following commands:
+
+```console
+$ ./maintainers/scripts/haskell/update-hackage.sh --do-commit
+$ ./maintainers/scripts/haskell/regenerate-hackage-packages.sh --do-commit
+```
+
+This will regenerate the haskell package set as well, causing all
+attributes pointing to the latest version of a package (if it differs
+from the default one) to be updated. This can introduce evaluation
+errors if the packages are used to fix build failures. Before we
+continue, we need to verify this is not the case which can be done
+using the following bash snippet:
+
+```bash
+for v in ghc884 ghc8104 ghc901; do
+  nix-env -qaP -f . -A haskell.packages.$v --out-path > /dev/null
+done
+```
+
+If successful, this will complete with no output (may take a minute or so!).
+If an error is displayed, make sure to fix the evaluation error before
+continuing (also confirm that the build of any changed package still
+works).
+
+<!-- TODO(@sternenseemann): tips on this? -->
+
+The package set generation also adds new packages which have been uploaded
+to Hackage. For these we also need to make sure that they won't be updated
+to a newer version (which possibly contains a breaking change) on the next
+Hackage update. To prevent this, the following invocation will generate a
+version constraint pinning any new packages to their current version:
+
+```console
+$ ./maintainers/scripts/haskell/freeze-packages.sh --do-commit
+```
+
+Now we're all set to make use of the new version data obtained from Hackage!
+
+#### Updating a package
+
+In comparison to updating the Hackage snapshot, updating a single package
+is much easier on the release branch. It involves just three steps:
+
+1. Edit `pkgs/development/haskell-modules/configuration-hackage2nix/frozen-packages.yaml`
+   and change the version number for your package to the desired one.
+
+1. Run `./maintainers/scripts/haskell/regenerate-hackage-packages.sh`
+   (without the `--do-commit` flag) to apply your change(s) to the
+   package set.
+
+1. Compile the affected package(s) and confirm they are working.
+   If you are happy, commit the changed files with the familiar
+   `haskellPackages.<package name>: <old version> -> <new version>`
+   commit message format.
