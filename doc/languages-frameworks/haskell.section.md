@@ -400,6 +400,8 @@ documentation.
 
 ### Package set generation {#sec-haskell-package-set-generation}
 
+### Packaging a Haskell project
+
 ### Backporting {#sec-haskell-backporting}
 
 Backporting changes to a stable NixOS version in general is covered
