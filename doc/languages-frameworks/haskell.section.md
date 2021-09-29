@@ -103,7 +103,7 @@ haskell.packages.ghc901.abcBridge                                               
 
 Every package set also re-exposes its GHC as `haskell.packages.*.ghc`.
 
-## `haskellPackages.mkDerivation`
+## `haskellPackages.mkDerivation` {#haskell-mkderivation}
 
 Every haskell package set has its own haskell-aware `mkDerivation` which
 is used to build its packages. Generally you won't have to interact with
