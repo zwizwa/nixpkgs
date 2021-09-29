@@ -390,6 +390,10 @@ documentation.
 
 ## Overriding haskell packages {#sec-haskell-overriding-haskell-packages}
 
+### Overriding a single package
+
+### Overriding the entire package set
+
 ## Contributing {#sec-haskell-contributing}
 
 ### Fixing a broken package {#sec-haskell-fixing-a-broken-package}
