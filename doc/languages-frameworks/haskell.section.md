@@ -584,6 +584,12 @@ pkgs.haskellPackages.shellFor {
 
 ### Overriding the entire package set
 
+## Import-from-Derivation helpers
+
+* `callCabal2nix`
+* `callHackage`, `callHackageDirect`
+* `developPackage`
+
 ## Contributing {#sec-haskell-contributing}
 
 ### Fixing a broken package {#sec-haskell-fixing-a-broken-package}
